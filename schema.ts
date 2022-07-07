@@ -14,7 +14,7 @@ const createGroup = db.prepare(`
 create table if not exists groups (
     id integer primary key,
     name text not null,
-    createdAt integer default (strftime('%s'))
+    created_at integer default (strftime('%s'))
 );`);
 
 const createPerson = db.prepare(`
