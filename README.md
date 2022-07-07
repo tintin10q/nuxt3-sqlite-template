@@ -6,7 +6,7 @@ I also added nuxt-storm because I use webstorm.
 
 Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) and [better-sqlite-3](https://github.com/WiseLibs/better-sqlite3) to learn more.
 
-Use schema.ts to create the database with the required tables. 
+Use `npx ts-node schema.ts` to create the database with the required tables. 
 
 ## Setup
 
