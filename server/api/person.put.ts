@@ -5,24 +5,36 @@ import {useDB} from "~/server/utils/db";
 
 const db = useDB()
 
-const getPerson = db.prepare('select * from person where id = ?')
-const getPersonTransaction = db.transaction((id) => {
-    getPerson.get(id)
+const updatePerson = db.prepare(`update people set name = coalesce(?, name), 
+                                                         description = coalesce(?, description),
+                                                         group_id = coalesce(?, group_id) where id = ?`)
+const updatePersonTransaction = db.transaction(({id, name, description, group_id}) => {
+    return updatePerson.run(name, description, group_id, id)
 })
-
 
 
 export default defineEventHandler((event) => {
 
     const url = new URL('https://127.0.0.1' + event.req.url);
 
-    // (just name)
+    let id = url.searchParams.get('id')
 
-    const id = url.searchParams.get('id')
     if (!id) {
         event.res.statusCode = 400;
         return error_json_response('no id in request url');
     }
 
-  return json_response("pong")
+    let name = url.searchParams.get('name')
+    let description = url.searchParams.get('description')
+    let group_id = url.searchParams.get('group_id')
+
+    if (isNaN(Number(id))) {
+        return error_json_response('Could not parse id as number')
+    }
+
+    console.log({id, name, description, group_id})
+
+    const {changes} = updatePersonTransaction({id, name, description, group_id})
+
+    return {changes}
 })
